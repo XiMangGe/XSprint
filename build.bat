@@ -1,5 +1,5 @@
 ﻿@echo off
-set VERSION=26.10.25.2
+set VERSION=26.10.25.3
 echo Building XSprint v%VERSION%...
 call mvn clean package -q
 if %ERRORLEVEL% equ 0 (
