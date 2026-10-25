@@ -1,6 +1,6 @@
 ﻿version: 26.10.25.1
 name: XSprint
-main: com.xmangge.XSprint.XSprint
+main: com.xmangge.xsprint.XSprint
 api-version: '1.20'
 description: Modify minecart speed limits on Paper/Purpur servers
 author: XiMangGe
@@ -8,17 +8,17 @@ softdepend: []
 website: https://github.com/XiMangGe/XSprint
 
 commands:
-  XSprint:
+  xsprint:
     description: Main command for XSprint plugin
-    usage: "/XSprint <subcommand>"
+    usage: "/xsprint <subcommand>"
     aliases: [xv, xvel]
-    permission: XSprint.admin
+    permission: xsprint.admin
     permission-message: "§c你没有权限使用此命令。"
 
 permissions:
-  XSprint.admin:
+  xsprint.admin:
     description: Allows using all XSprint commands
     default: op
-  XSprint.use:
+  xsprint.use:
     description: Allows using XSprint display features
     default: true
