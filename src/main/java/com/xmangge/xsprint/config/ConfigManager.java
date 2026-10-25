@@ -181,8 +181,8 @@ public class ConfigManager {
 
         public float getEffectiveMaxSpeed(int requestedSpeed) {
             if (!enabled) return 0f;
-            // 熔炉/TNT 矿车（高速矿车）最高 75格/s，普通矿车最高 25格/s
-            if (type.equals("furnace_minecart") || type.equals("tnt_minecart")) {
+            // 普通矿车最高 75格/s，其他矿车（箱子/漏斗/熔炉/TNT/刷怪笼）最高 25格/s
+            if (type.equals("minecart")) {
                 return Math.min(requestedSpeed, 75);
             }
             return Math.min(requestedSpeed, 25);
