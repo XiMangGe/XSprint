@@ -1,4 +1,4 @@
-﻿version: 26.10.25.2
+﻿version: 26.10.25.3
 name: XSprint
 main: com.xmangge.xsprint.XSprint
 api-version: '1.20'
