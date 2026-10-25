@@ -37,7 +37,9 @@ public class ConfigManager {
             for (String key : config.getConfigurationSection("minecarts").getKeys(false)) {
                 boolean enabled = config.getBoolean("minecarts." + key + ".enabled", true);
                 int speed = config.getInt("minecarts." + key + ".speed", 25);
-                minecartConfigs.put(key, new MinecartSpeedConfig(key, enabled, speed));
+                // 统一转小写，保证 TNT_minecart / tnt_minecart 都能匹配
+                String lowerKey = key.toLowerCase();
+                minecartConfigs.put(lowerKey, new MinecartSpeedConfig(lowerKey, enabled, speed));
             }
         }
 
@@ -179,11 +181,11 @@ public class ConfigManager {
 
         public float getEffectiveMaxSpeed(int requestedSpeed) {
             if (!enabled) return 0f;
-            // 高速矿车（熔炉/TNT）上限更高，普通矿车保守一些
-            if (type.equals("furnace_minecart") || type.equals("TNT_minecart")) {
-                return Math.min(requestedSpeed, 300);
+            // 熔炉/TNT 矿车（高速矿车）最高 75格/s，普通矿车最高 25格/s
+            if (type.equals("furnace_minecart") || type.equals("tnt_minecart")) {
+                return Math.min(requestedSpeed, 75);
             }
-            return Math.min(requestedSpeed, 100);
+            return Math.min(requestedSpeed, 25);
         }
     }
 }
