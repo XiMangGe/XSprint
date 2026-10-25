@@ -8,27 +8,20 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 矿车速度管理器
  *
- * 设计思路：
- * - setMaxSpeed 设为极高值（999），让原版物理完全自由运行，坡道/弯道速度不受限
- * - 只在水平方向做钳制：每 tick 检查水平速度，超过上限时按比例衰减
- * - 垂直速度（y轴）完全不受影响，保证上下坡时能冲上斜坡
- * - 拐弯时的离心力也不会被干预，防止因速度被突然拉低导致脱轨
+ * 设计理念：
+ * - 只调用 setMaxSpeed() 设置速度上限，不做任何速度修改
+ * - 原版 Paper 物理完整运行：上坡自然减速、弯道自然减速到 ~8格/s
+ * - setMaxSpeed 控制的是合速度（含垂直分量），所以只要上限设得够高
+ *   就不会影响原版上下坡时的惯性表现
+ * - 不需要每 tick 干预，避免干扰原版摩擦/重力行为
  */
 public class MinecartSpeedManager implements Listener {
 
     private final XSprint plugin;
-    // uid -> 配置的最高速度（水平方向）
-    private final Map<String, Float> minecartMaxSpeeds = new HashMap<>();
-
-    private BukkitRunnable speedUpdater;
 
     public MinecartSpeedManager(XSprint plugin) {
         this.plugin = plugin;
@@ -37,13 +30,9 @@ public class MinecartSpeedManager implements Listener {
     public void onEnable() {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
         applySpeedsToExistingMinecarts();
-        startSpeedUpdater();
     }
 
     public void onDisable() {
-        if (speedUpdater != null) {
-            speedUpdater.cancel();
-        }
         clearAllSpeedMods();
     }
 
@@ -66,73 +55,23 @@ public class MinecartSpeedManager implements Listener {
 
     /**
      * 为矿车应用速度配置。
-     * setMaxSpeed 设为极大值，原版物理完全自由（坡道/弯道不限速）。
-     * 实际上限由 clampHorizontalVelocity 在后台逐 tick 钳制水平分量。
+     * 直接调用 setMaxSpeed 设置上限，原版物理完全自由：
+     * - 平地上加速到配置的上限
+     * - 上坡/弯道时原版摩擦力自然减速到 8格/s
      */
     public void applySpeedToMinecart(Minecart minecart) {
         String type = getMinecartTypeString(minecart.getType());
         ConfigManager.MinecartSpeedConfig config = plugin.getConfigManager().getMinecartConfig(type);
         if (config != null && config.enabled) {
             float maxSpeed = config.getEffectiveMaxSpeed(config.speed);
-            minecartMaxSpeeds.put(minecart.getUniqueId().toString(), maxSpeed);
-            // 极大值：让原版物理完全自由，坡道和弯道速度不受限
-            minecart.setMaxSpeed(999.0f);
+            minecart.setMaxSpeed(maxSpeed);
         }
     }
 
     /**
-     * 每 tick 执行一次，只对水平分量做平滑钳制。
-     * 垂直分量（y轴）完全保留，确保上下坡时有足够惯性冲上坡。
-     */
-    private void startSpeedUpdater() {
-        speedUpdater = new BukkitRunnable() {
-            @Override
-            public void run() {
-                for (Entity entity : plugin.getServer().getOnlinePlayers()) {
-                    if (entity.getVehicle() instanceof Minecart) {
-                        clampHorizontalVelocity((Minecart) entity.getVehicle());
-                    }
-                }
-            }
-        };
-        // 每 tick 执行，保证响应及时但不会太激进
-        speedUpdater.runTaskTimer(plugin, 0L, 1L);
-    }
-
-    /**
-     * 平滑钳制水平速度：
-     * - 仅修改 XZ 平面分量，Y 轴（垂直）完全保留
-     * - 超过上限时每 tick 衰减 5%，避免瞬间跳变
-     * - 坡道/弯道时原版物理自由计算，不会被干预
-     */
-    private void clampHorizontalVelocity(Minecart minecart) {
-        String uid = minecart.getUniqueId().toString();
-        Float maxSpeed = minecartMaxSpeeds.get(uid);
-        if (maxSpeed == null) {
-            applySpeedToMinecart(minecart);
-            maxSpeed = minecartMaxSpeeds.get(uid);
-        }
-        if (maxSpeed == null || maxSpeed <= 0) return;
-
-        Vector v = minecart.getVelocity();
-        double dx = v.getX();
-        double dz = v.getZ();
-        double dy = v.getY(); // 垂直分量，永不修改
-        double horizontalSpeed = Math.sqrt(dx * dx + dz * dz);
-
-        if (horizontalSpeed > maxSpeed) {
-            // 每 tick 衰减 5%，逐渐回归上限，不造成瞬间卡顿感
-            double ratio = 1.0 - 0.05;
-            minecart.setVelocity(new Vector(dx * ratio, dy, dz * ratio));
-        }
-        // 未超限时完全不做任何修改，让原版物理自由运行
-    }
-
-    /**
-     * 插件关闭时清除所有矿车的速度修改，恢复原版行为
+     * 插件关闭时清除所有矿车的速度修改，恢复原版 0.4格/s
      */
     private void clearAllSpeedMods() {
-        minecartMaxSpeeds.clear();
         plugin.getServer().getWorlds().forEach(world -> {
             for (Entity entity : world.getEntities()) {
                 if (entity instanceof Minecart) {
