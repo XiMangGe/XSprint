@@ -1,0 +1,52 @@
+﻿# XSprint 语言文件 - 简体中文 (zh_cn)
+
+prefix: "&9[XSprint]&f "
+
+# 命令反馈
+cmd-help:
+  header: "&9===== XSprint 帮助 ====="
+  footer: "&7使用 /XSprint <子命令> 来操作"
+  entries:
+    - "&e/XSprint help &7- 显示此帮助"
+    - "&e/XSprint set <矿车类型> <速度> &7- 设置指定矿车速度上限"
+    - &e/XSprint setglobal <速度> &7- 设置全局矿车速度上限
+    - "&e/XSprint lang <语言> &7- 设置插件语言"
+    - "&e/XSprint display [启用/禁用] [方法] &7- 配置速度显示"
+    - "&e/XSprint reload &7- 重载配置文件"
+
+cmd-set-success: "&a已设置 &e{type}&a 的速度上限为 &e{speed} &a格/秒"
+cmd-set-not-found: "&c未找到矿车类型 &e{type}&c，请检查输入"
+cmd-set-global-success: "&a全局矿车速度上限已设置为 &e{speed} &a格/秒"
+cmd-lang-success: "&a插件语言已切换为 &e{lang}&a"
+cmd-lang-invalid: "&c无效的语言代码，可用: {langs}"
+cmd-display-success: "&a速度显示已 &e{action}&a，方法: &e{method}"
+cmd-display-disabled: "&a速度显示已禁用"
+cmd-reload-success: "&a配置文件已重载"
+cmd-no-permission: "&c你没有权限使用此命令"
+cmd-console-only: "&c此命令只能在控制台执行"
+cmd-player-only: "&c此命令只能在游戏中执行"
+
+# GUI 界面
+gui-title: "&9矿车速度设置"
+gui-page1-title: "&9矿车速度设置 - 钻石页 (每个+5格/s)"
+gui-page2-title: "&9矿车速度设置 - 红石页 (每个+1格/s)"
+gui-current-speed: "&7当前速度上限: &e{speed} &7格/秒"
+gui-instructions: "&7右键点击物品增加速度"
+gui-page-hint: "&7右键左下角的纸张翻页"
+
+# 速度显示
+display-speed: "&7⚡ &e{speed} &7格/秒"
+display-speed-title:
+  title: "&7⚡ 矿车速度"
+  subtitle: "&e{speed} &7格/秒"
+display-speed-bossbar:
+  text: "&7⚡ &e{speed} &7格/秒"
+  color: "YELLOW"
+  fog: false
+display-scoreboard:
+  title: "&7⚡ 矿车速度"
+  line: "&e{speed} &7格/秒"
+
+# 交互提示
+interact-prompt: "&e请对着矿车潜行 + 左键 + 右键 来打开速度设置界面"
+interact-success: "&a正在打开矿车速度设置界面..."
