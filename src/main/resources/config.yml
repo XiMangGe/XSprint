@@ -1,0 +1,35 @@
+﻿# ===========================================
+# XSprint - Minecart Speed Limit Plugin
+# ===========================================
+
+# === 语言设置 ===
+language: zh_cn
+
+# === 速度显示设置 ===
+speed-display:
+  enabled: true
+  # 显示方法: actionbar(动作栏), title(标题), bossbar(首领栏), scoreboard(计分板)
+  method: actionbar
+
+# === 矿车速度配置 ===
+# speed: 目标速度上限（整数，格/秒）
+# enabled: false 表示不改速度（使用原版）
+minecarts:
+  minecart:
+    enabled: true
+    speed: 25
+  chest_minecart:
+    enabled: true
+    speed: 25
+  hopper_minecart:
+    enabled: true
+    speed: 25
+  furnace_minecart:
+    enabled: true
+    speed: 75
+  TNT_minecart:
+    enabled: true
+    speed: 75
+  spawner_minecart:
+    enabled: true
+    speed: 25
