@@ -1,0 +1,52 @@
+﻿# XSprint Language File - English (en_us)
+
+prefix: "&9[XSprint]&f "
+
+# Command feedback
+cmd-help:
+  header: "&9===== XSprint Help ====="
+  footer: "&7Use /XSprint <subcommand> to operate"
+  entries:
+    - "&e/XSprint help &7- Show this help"
+    - "&e/XSprint set <minecart_type> <speed> &7- Set speed limit for specific minecart"
+    - "&e/XSprint setglobal <speed> &7- Set global minecart speed limit"
+    - "&e/XSprint lang <language> &7- Set plugin language"
+    - "&e/XSprint display [enable/disable] [method] &7- Configure speed display"
+    - "&e/XSprint reload &7- Reload config files"
+
+cmd-set-success: "&aSet &e{type}&a speed limit to &e{speed} &agrid/s"
+cmd-set-not-found: "&cMinecart type &e{type}&c not found, check your input"
+cmd-set-global-success: "&aGlobal minecart speed limit set to &e{speed} &agrid/s"
+cmd-lang-success: "&aPlugin language changed to &e{lang}&a"
+cmd-lang-invalid: "&cInvalid language code, available: {langs}"
+cmd-display-success: "&aSpeed display &e{action}&a, method: &e{method}"
+cmd-display-disabled: "&aSpeed display disabled"
+cmd-reload-success: "&aConfig files reloaded"
+cmd-no-permission: "&cYou do not have permission to use this command"
+cmd-console-only: "&cThis command can only be executed from console"
+cmd-player-only: "&cThis command can only be executed in-game"
+
+# GUI
+gui-title: "&9Minecart Speed Settings"
+gui-page1-title: "&9Minecart Speed Settings - Diamond Page (+5 per)"
+gui-page2-title: "&9Minecart Speed Settings - Redstone Page (+1 per)"
+gui-current-speed: "&7Current speed limit: &e{speed} &7blocks/s"
+gui-instructions: "&7Right-click items to increase speed"
+gui-page-hint: "&7Right-click paper in bottom-left to switch pages"
+
+# Speed Display
+display-speed: "&7⚡ &e{speed} &7blocks/s"
+display-speed-title:
+  title: "&7⚡ Minecart Speed"
+  subtitle: "&e{speed} &7blocks/s"
+display-speed-bossbar:
+  text: "&7⚡ &e{speed} &7blocks/s"
+  color: "YELLOW"
+  fog: false
+display-scoreboard:
+  title: "&7⚡ Minecart Speed"
+  line: "&e{speed} &7blocks/s"
+
+# Interaction
+interact-prompt: "&eSneak + Left Click + Right Click on a minecart to open speed settings"
+interact-success: "&aOpening minecart speed settings..."
