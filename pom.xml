@@ -6,7 +6,7 @@
 
     <groupId>com.xmangge</groupId>
     <artifactId>XSprint</artifactId>
-    <version>26.10.25.1</version>
+    <version>26.10.25.2</version>
     <packaging>jar</packaging>
     <name>XSprint</name>
     <description>Minecart speed limit plugin for Paper/Purpur</description>
@@ -32,7 +32,7 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <VERSION>26.10.25.1</VERSION>
+        <VERSION>26.10.25.2</VERSION>
     </properties>
 
     <build>
