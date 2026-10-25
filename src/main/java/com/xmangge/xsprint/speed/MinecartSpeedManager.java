@@ -4,7 +4,6 @@ import com.xmangge.xsprint.XSprint;
 import com.xmangge.xsprint.config.ConfigManager;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Minecart;
-import org.bukkit.entity.Vehicle;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntitySpawnEvent;
