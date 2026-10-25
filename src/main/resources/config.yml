@@ -14,12 +14,12 @@ speed-display:
 # === 矿车速度配置 ===
 # speed: 目标速度上限（整数，格/秒），实际生效时会按类型强制封顶
 # enabled: false 表示不改速度（使用原版）
-# 上限：普通矿车 25格/s，熔炉/TNT 矿车 75格/s
-# 上下坡、拐弯时自动保持原版 8格/s，防止脱轨和上坡停死
+# 上限：普通矿车 75格/s，其他矿车 25格/s
+# 上下坡、拐弯时自动保持原版 8格/s，上坡自动补速不会停死
 minecarts:
   minecart:
     enabled: true
-    speed: 25
+    speed: 75
   chest_minecart:
     enabled: true
     speed: 25
@@ -31,7 +31,7 @@ minecarts:
     speed: 25
   furnace_minecart:
     enabled: true
-    speed: 75
+    speed: 25
   tnt_minecart:
     enabled: true
-    speed: 75
+    speed: 25
