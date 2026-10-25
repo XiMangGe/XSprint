@@ -32,9 +32,6 @@ public class ConfigManager {
         String lang = config.getString("language", "zh_cn");
         plugin.getLanguageManager().setLanguage(lang);
 
-        boolean displayEnabled = config.getBoolean("speed-display.enabled", true);
-        String displayMethod = config.getString("speed-display.method", "actionbar");
-
         minecartConfigs.clear();
         if (config.contains("minecarts")) {
             for (String key : config.getConfigurationSection("minecarts").getKeys(false)) {
@@ -87,8 +84,16 @@ public class ConfigManager {
     }
 
     public void setMinecartSpeed(String type, int speed) {
-        minecartConfigs.get(type.toLowerCase()).speed = speed;
-        config.set("minecarts." + type + ".speed", speed);
+        String lowerType = type.toLowerCase();
+        MinecartSpeedConfig existing = minecartConfigs.get(lowerType);
+        if (existing != null) {
+            existing.speed = speed;
+        } else {
+            // 新类型，自动添加到配置
+            minecartConfigs.put(lowerType, new MinecartSpeedConfig(lowerType, true, speed));
+        }
+        config.set("minecarts." + lowerType + ".enabled", true);
+        config.set("minecarts." + lowerType + ".speed", speed);
         saveConfig();
     }
 
