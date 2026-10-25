@@ -78,8 +78,8 @@ public class MinecartSpeedManager implements Listener {
 
     /**
      * 矿车移动时检查：当前脚下或前方（一个 tick 移动距离内）是否有坡道/弯道。
-     * 有 → 把速度上限临时压到 8格/s；离开后 → 恢复配置上限。
-     * 提前检测是为了让高速矿车在进弯/进坡之前就减速，避免冲出轨道。
+     * 有 → 水平速度固定为原版 8格/s（上限不动，避免被原版钳死）；
+     * 上坡速度不足 8格/s 时自动补速，坡顶不会停死。
      */
     @EventHandler
     public void onVehicleMove(VehicleMoveEvent event) {
@@ -89,21 +89,29 @@ public class MinecartSpeedManager implements Listener {
         ConfigManager.MinecartSpeedConfig config = getConfigFor(minecart);
         if (config == null || !config.enabled) return;
 
+        // 上限始终保持配置值：压低上限会被原版钳制，反而让坡上的矿车停死
         float normalMax = config.getEffectiveMaxSpeed(config.speed);
-        Rail.Shape danger = findSlopeOrCurveAhead(minecart);
-
-        if (danger != null) {
-            if (minecart.getMaxSpeed() != SLOPE_SPEED) {
-                minecart.setMaxSpeed((float) SLOPE_SPEED);
-            }
-            // 正在上坡但速度掉到 8格/s 以下 → 沿行进方向助推，防止坡顶停死
-            if (isAscendingAt(minecart.getLocation())
-                    && horizontalSpeed(minecart) < SLOPE_SPEED) {
-                boostAlong(minecart);
-            }
-        } else if (minecart.getMaxSpeed() != normalMax) {
+        if (minecart.getMaxSpeed() != normalMax) {
             minecart.setMaxSpeed(normalMax);
         }
+
+        // 坡道/弯道（含提前一格的预判）：水平速度固定回原版 8格/s
+        if (findSlopeOrCurveAhead(minecart) == null) return;
+
+        double h = horizontalSpeed(minecart);
+        if (h > SLOPE_SPEED) {
+            clampHorizontal(minecart, h);
+        } else if (h < SLOPE_SPEED && isAscendingAt(minecart.getLocation())) {
+            // 上坡速度不足 8格/s → 沿行进方向补到 8格/s，坡顶不会停死
+            boostAlong(minecart);
+        }
+    }
+
+    /** 只压缩水平速度，保留垂直分量，否则上坡会被打断 */
+    private void clampHorizontal(Minecart cart, double h) {
+        Vector v = cart.getVelocity();
+        double scale = SLOPE_SPEED / h;
+        cart.setVelocity(new Vector(v.getX() * scale, v.getY(), v.getZ() * scale));
     }
 
     /**
