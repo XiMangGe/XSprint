@@ -1,7 +1,6 @@
 package com.xmangge.xsprint.listeners;
 
 import com.xmangge.xsprint.XSprint;
-import com.xmangge.xsprint.config.ConfigManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Minecart;
@@ -9,6 +8,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityMountEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.DisplaySlot;
@@ -26,13 +26,32 @@ public class SpeedDisplayListener implements Listener {
 
     private final XSprint plugin;
     private final Map<UUID, String> playerDisplayMethods = new HashMap<>();
-    // 使用 Runnable 存储任务引用以便取消
     private final Map<UUID, Runnable> displayTasks = new HashMap<>();
     private final Map<UUID, org.bukkit.boss.BossBar> playerBossBars = new HashMap<>();
     private final Map<UUID, Scoreboard> playerScoreboards = new HashMap<>();
 
     public SpeedDisplayListener(XSprint plugin) {
         this.plugin = plugin;
+    }
+
+    /**
+     * 玩家骑乘矿车时启动速度显示
+     */
+    @EventHandler
+    public void onVehicleChange(EntityMountEvent event) {
+        if (!(event.getEntity() instanceof Player)) return;
+        Player player = (Player) event.getEntity();
+        UUID playerId = player.getUniqueId();
+        cancelDisplayTask(playerId);
+
+        if (event.getMount() instanceof Minecart) {
+            startSpeedDisplay(player, event.getMount());
+        }
+    }
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent event) {
+        cancelDisplayTask(event.getPlayer().getUniqueId());
     }
 
     private void startSpeedDisplay(Player player, Entity vehicle) {
@@ -60,9 +79,6 @@ public class SpeedDisplayListener implements Listener {
         }
     }
 
-    /**
-     * 动作栏显示 - 在屏幕底部中央显示速度
-     */
     private void startActionBarDisplay(Player player, Entity vehicle) {
         UUID playerId = player.getUniqueId();
         cancelDisplayTask(playerId);
@@ -86,9 +102,6 @@ public class SpeedDisplayListener implements Listener {
         displayTasks.put(playerId, task);
     }
 
-    /**
-     * 标题显示 - 在屏幕中央显示大标题和小标题
-     */
     private void startTitleDisplay(Player player, Entity vehicle) {
         UUID playerId = player.getUniqueId();
         cancelDisplayTask(playerId);
@@ -119,9 +132,6 @@ public class SpeedDisplayListener implements Listener {
         displayTasks.put(playerId, task);
     }
 
-    /**
-     * 首领栏显示 - 在屏幕顶部显示进度条
-     */
     private void startBossBarDisplay(Player player, Entity vehicle) {
         UUID playerId = player.getUniqueId();
         cancelDisplayTask(playerId);
@@ -154,9 +164,6 @@ public class SpeedDisplayListener implements Listener {
         displayTasks.put(playerId, task);
     }
 
-    /**
-     * 计分板显示 - 在右侧边栏显示速度
-     */
     private void startScoreboardDisplay(Player player, Entity vehicle) {
         UUID playerId = player.getUniqueId();
         cancelDisplayTask(playerId);
