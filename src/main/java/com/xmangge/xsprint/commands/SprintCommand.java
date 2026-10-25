@@ -35,6 +35,7 @@ public class SprintCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+        // 使用 label（命令标签）而非硬编码，支持别名
         String prefix = ChatColor.translateAlternateColorCodes('&',
             plugin.getLanguageManager().get("prefix"));
 
@@ -51,32 +52,32 @@ public class SprintCommand implements CommandExecutor, TabCompleter {
                 break;
 
             case "set":
-                if (!sender.hasPermission("XSprint.admin")) {
+                if (!sender.hasPermission("xsprint.admin")) {
                     sender.sendMessage(prefix + plugin.getLanguageManager().get("cmd-no-permission"));
                     break;
                 }
                 if (args.length < 3) {
-                    sender.sendMessage(prefix + "§c用法: /XSprint set <矿车类型> <速度>");
+                    sender.sendMessage(prefix + "§c用法: /" + label + " set <矿车类型> <速度>");
                     break;
                 }
                 try {
-                    handleSet(sender, prefix, args[1], Integer.parseInt(args[2]));
+                    handleSet(sender, prefix, label, args[1], Integer.parseInt(args[2]));
                 } catch (NumberFormatException e) {
                     sender.sendMessage(prefix + "§c速度必须是整数");
                 }
                 break;
 
             case "setglobal":
-                if (!sender.hasPermission("XSprint.admin")) {
+                if (!sender.hasPermission("xsprint.admin")) {
                     sender.sendMessage(prefix + plugin.getLanguageManager().get("cmd-no-permission"));
                     break;
                 }
                 if (args.length < 2) {
-                    sender.sendMessage(prefix + "§c用法: /XSprint setglobal <速度>");
+                    sender.sendMessage(prefix + "§c用法: /" + label + " setglobal <速度>");
                     break;
                 }
                 try {
-                    handleSetGlobal(sender, prefix, Float.parseFloat(args[1]));
+                    handleSetGlobal(sender, prefix, label, Float.parseFloat(args[1]));
                 } catch (NumberFormatException e) {
                     sender.sendMessage(prefix + "§c速度必须是数字");
                 }
@@ -84,7 +85,7 @@ public class SprintCommand implements CommandExecutor, TabCompleter {
 
             case "lang":
                 if (args.length < 2) {
-                    sender.sendMessage(prefix + "§c用法: /XSprint lang <语言>");
+                    sender.sendMessage(prefix + "§c用法: /" + label + " lang <语言>");
                     break;
                 }
                 handleLang(sender, prefix, args[1]);
@@ -92,14 +93,14 @@ public class SprintCommand implements CommandExecutor, TabCompleter {
 
             case "display":
                 if (args.length < 2) {
-                    sender.sendMessage(prefix + "§c用法: /XSprint display <enable/disable/toggle> [方法]");
+                    sender.sendMessage(prefix + "§c用法: /" + label + " display <enable/disable/toggle> [方法]");
                     break;
                 }
-                handleDisplay(sender, prefix, args[1], args.length > 2 ? args[2] : null);
+                handleDisplay(sender, prefix, label, args[1], args.length > 2 ? args[2] : null);
                 break;
 
             case "reload":
-                if (!sender.hasPermission("XSprint.admin")) {
+                if (!sender.hasPermission("xsprint.admin")) {
                     sender.sendMessage(prefix + plugin.getLanguageManager().get("cmd-no-permission"));
                     break;
                 }
@@ -132,7 +133,7 @@ public class SprintCommand implements CommandExecutor, TabCompleter {
         return true;
     }
 
-    private void handleSet(CommandSender sender, String prefix, String type, int speed) {
+    private void handleSet(CommandSender sender, String prefix, String label, String type, int speed) {
         String lowerType = type.toLowerCase();
         ConfigManager.MinecartSpeedConfig config = plugin.getConfigManager().getMinecartConfig(lowerType);
 
@@ -163,7 +164,7 @@ public class SprintCommand implements CommandExecutor, TabCompleter {
             .replace("{speed}", String.valueOf(speed)));
     }
 
-    private void handleSetGlobal(CommandSender sender, String prefix, float speed) {
+    private void handleSetGlobal(CommandSender sender, String prefix, String label, float speed) {
         plugin.getConfigManager().setGlobalSpeedLimit(speed);
 
         for (org.bukkit.World world : Bukkit.getWorlds()) {
@@ -189,7 +190,7 @@ public class SprintCommand implements CommandExecutor, TabCompleter {
             .replace("{lang}", lang));
     }
 
-    private void handleDisplay(CommandSender sender, String prefix, String action, String method) {
+    private void handleDisplay(CommandSender sender, String prefix, String label, String action, String method) {
         boolean enabled = action.equalsIgnoreCase("enable");
         boolean disabled = action.equalsIgnoreCase("disable");
         boolean toggle = action.equalsIgnoreCase("toggle");
@@ -210,7 +211,7 @@ public class SprintCommand implements CommandExecutor, TabCompleter {
                     .replace("{method}", plugin.getConfigManager().getDisplayMethod()));
             }
         } else {
-            sender.sendMessage(prefix + "§c用法: /XSprint display <enable/disable/toggle> [方法]");
+            sender.sendMessage(prefix + "§c用法: /" + label + " display <enable/disable/toggle> [方法]");
         }
     }
 
